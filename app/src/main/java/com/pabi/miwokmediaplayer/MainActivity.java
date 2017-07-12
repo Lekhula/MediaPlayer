@@ -124,7 +124,6 @@ public class MainActivity extends Activity {
                 mediaPlayer.pause();
                 pause.setEnabled(false);
                 play.setEnabled(true);
-                //next.setEnabled(true);
             }
         });
 
