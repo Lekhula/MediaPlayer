@@ -8,5 +8,5 @@
     <!-- Background color for app -->
     <color name="tan_background">#FFF7DA</color>
 
-    <color name="primary_grey_color">#BDBDBD</color>
+    <color name="primary_grey_color">#aaa</color>
 </resources>

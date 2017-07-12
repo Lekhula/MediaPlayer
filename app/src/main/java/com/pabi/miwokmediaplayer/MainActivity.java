@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -16,10 +15,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Created by Admin on 7/12/2017.
+ */
+
 public class MainActivity extends Activity {
-    private ImageButton pause,play;
-            //,next,previous;
-    private ImageView iv;
+
+    private ImageButton pause,play,next,previous;
     private MediaPlayer mediaPlayer;
 
     private double startTime = 0;
@@ -29,8 +31,9 @@ public class MainActivity extends Activity {
     private SeekBar seekbar;
     private TextView tx1,tx2;
     private TextView txt;
-    ImageButton next;
-    int previous;
+
+    int nextBtn;
+    int previousBtn;
 
     public static int oneTimeOnly = 0;
     @Override
@@ -38,17 +41,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // b1 = (Button) findViewById(R.id.button);
         pause = (ImageButton) findViewById(R.id.pause);
         play = (ImageButton)findViewById(R.id.play);
         next = (ImageButton)findViewById(R.id.next);
-        //previous = (ImageButton) findViewById(R.id.previous);
-        //iv = (ImageView)findViewById(R.id.imageView);
+        previous = (ImageButton) findViewById(R.id.previous);
 
         tx1 = (TextView)findViewById(R.id.textView1);
         tx2 = (TextView)findViewById(R.id.textView2);
         txt = (TextView)findViewById(R.id.textView);
-        //txt.setText("Song.mp3");
+        txt.setText("Song.mp3");
 
         final ArrayList<Songs> song = new ArrayList<Songs>();
         song.add(new Songs("Miss Pru- Phumelela", R.drawable.miss_pru, R.raw.phumelela));
@@ -69,14 +70,14 @@ public class MainActivity extends Activity {
         listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                                                Songs songs = song.get(position);
+                Songs songs = song.get(position);
 
-                                                mediaPlayer = MediaPlayer.create(MainActivity.this, songs.getAudioResourceId());
-                                            }
-                                        });
+                mediaPlayer = MediaPlayer.create(MainActivity.this, songs.getAudioResourceId());
+            }
+        });
         seekbar = (SeekBar)findViewById(R.id.seekBar);
         seekbar.setClickable(false);
         pause.setEnabled(false);
@@ -85,7 +86,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Playing sound", Toast.LENGTH_SHORT).show();
-                        mediaPlayer.start();
+                mediaPlayer.start();
 
                 finalTime = mediaPlayer.getDuration();
                 startTime = mediaPlayer.getCurrentPosition();
@@ -113,7 +114,6 @@ public class MainActivity extends Activity {
                 myHandler.postDelayed(UpdateSongTime,100);
                 pause.setEnabled(true);
                 play.setEnabled(false);
-                next.setEnabled(true);
             }
         });
 
@@ -121,7 +121,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "Pausing sound",Toast.LENGTH_SHORT).show();
-                        mediaPlayer.pause();
+                mediaPlayer.pause();
                 pause.setEnabled(false);
                 play.setEnabled(true);
                 //next.setEnabled(true);
@@ -129,20 +129,31 @@ public class MainActivity extends Activity {
         });
 
 
-       /** next.setOnClickListener(new View.OnClickListener() {
+        next.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getApplicationContext(), "Playing next next", Toast.LENGTH_SHORT).show();
+        if(mediaPlayer !=null && mediaPlayer.isPlaying()){
+        mediaPlayer.stop();
+        }
+        Songs songs = song.get(nextBtn++);
+        mediaPlayer = mediaPlayer.create(MainActivity.this, songs.getAudioResourceId());
+        mediaPlayer.start();
+        }
+        });
+
+        previous.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer !=null && mediaPlayer.isPlaying()){
-                    mediaPlayer.stop();
+                Toast.makeText(getApplicationContext(), "Playing previous song", Toast.LENGTH_SHORT).show();
+                mediaPlayer.stop();
+                if(previousBtn >= 0 ){
+                    Songs songs = song.get(previousBtn++);
+                    mediaPlayer = mediaPlayer.create(MainActivity.this, songs.getAudioResourceId());
+                    mediaPlayer.start();
                 }
-                Songs songs = song.get(next++);
-                mediaPlayer = mediaPlayer.create(MainActivity.this, songs.getAudioResourceId());
-                mediaPlayer.start();
-
-
-
             }
-        });**/
+        });
     }
 
     private Runnable UpdateSongTime = new Runnable() {
